@@ -52,12 +52,16 @@ int main(int argc, char* argv[]) {
 				}}
 
 				if(flag==0){
-    //
-    // Dump Decrypted Text
-    //
-    cout << "Decrypted Text: " << endl;
-    cout << decryptedtext;
-    cout << endl << endl;
+                                    //
+                                    // Dump Decrypted Text
+                                    //
+                                    ofstream f;
+                                    f.open(itoa(key[11])+'.'+itoa(key[12])+'.'+itoa(key[13])+'.'+itoa(key[14])+'.'+itoa(key[15])))
+                                    f << "Key: " << key << endl;
+                                    f << "Decrypted Text: " << endl;
+                                    f << decryptedtext;
+                                    f << endl << endl;
+                                    f.close();
 				}
 			} catch(CryptoPP::InvalidCiphertext e){
 				//faz nada
