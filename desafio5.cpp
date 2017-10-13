@@ -31,7 +31,8 @@ int main(int argc, char* argv[]) {
             for(key[13] = 33; key[13] <= 126; key[13]++){
                 for(key[14] = 33; key[14] <= 126; key[14]++){
                     #pragma omp parallel for
-                    for(key[15] = 33; key[15] <= 126; key[15]++){
+                    for(int k = 33; k <= 126; k++){
+			key[15] = k;
                         decryptedtext = "";
                         //
                         // Decrypt
@@ -40,26 +41,27 @@ int main(int argc, char* argv[]) {
                         ecbDecryption.SetKey(key,sizeof(key));
 
 			try{
-                        CryptoPP::StreamTransformationFilter stfDecryptor(ecbDecryption, new CryptoPP::StringSink( decryptedtext ) );
-                        stfDecryptor.Put( reinterpret_cast<const unsigned char*>( ciphertext.c_str() ), ciphertext.size() );
-                        stfDecryptor.MessageEnd();
-			} catch(CryptoPP::InvalidCiphertext e){
-				break;
-			}
+	                        CryptoPP::StreamTransformationFilter stfDecryptor(ecbDecryption, new CryptoPP::StringSink( decryptedtext ) );
+                        	stfDecryptor.Put( reinterpret_cast<const unsigned char*>( ciphertext.c_str() ), ciphertext.size() );
+                	        stfDecryptor.MessageEnd();
 
-			int flag = 0;
-			for(int i = 0; i < decryptedtext.size(); i++){
-				if(decryptedtext[i] < 0 || (decryptedtext[i] > 0 && decryptedtext[i] < 8) || (decryptedtext[i] > 13 && decryptedtext[i] < 32) || decryptedtext[i] > 126){
-					flag = 1; break;
-			}}
+				int flag = 0;
+				for(int i = 0; i < decryptedtext.size(); i++){
+					if(decryptedtext[i] < 0 || (decryptedtext[i] > 0 && decryptedtext[i] < 8) || (decryptedtext[i] > 13 && decryptedtext[i] < 32) || decryptedtext[i] > 126){
+						flag = 1; break;
+				}}
 
-			if(flag==1) break;
+				if(flag==0){
     //
     // Dump Decrypted Text
     //
     cout << "Decrypted Text: " << endl;
     cout << decryptedtext;
     cout << endl << endl;
+				}
+			} catch(CryptoPP::InvalidCiphertext e){
+				//faz nada
+			}
                     }
                 }
             }
