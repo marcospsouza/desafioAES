@@ -24,17 +24,15 @@ int main(int argc, char* argv[]) {
 	}
     }
 
-    while(ciphertext.size() % 16 != 0) ciphertext += '\0';
+    //while(ciphertext.size() % 16 != 0) ciphertext += '\0';
 
-    cout << ciphertext.size() << endl;
-
-/*    for(key[11] = 33; key[11] <= 126; key[11]++){
+    for(key[11] = 33; key[11] <= 126; key[11]++){
         for(key[12] = 33; key[12] <= 126; key[12]++){
             for(key[13] = 33; key[13] <= 126; key[13]++){
                 for(key[14] = 33; key[14] <= 126; key[14]++){
                     #pragma omp parallel for
                     for(key[15] = 33; key[15] <= 126; key[15]++){
-*/
+                        decryptedtext = "";
                         //
                         // Decrypt
                         //
@@ -46,20 +44,27 @@ int main(int argc, char* argv[]) {
                         stfDecryptor.Put( reinterpret_cast<const unsigned char*>( ciphertext.c_str() ), ciphertext.size() );
                         stfDecryptor.MessageEnd();
 			} catch(CryptoPP::InvalidCiphertext e){
-				cout << endl << e.GetWhat() << endl;
+				break;
 			}
+
+			int flag = 0;
+			for(int i = 0; i < decryptedtext.size(); i++){
+				if(decryptedtext[i] < 0 || (decryptedtext[i] > 0 && decryptedtext[i] < 8) || (decryptedtext[i] > 13 && decryptedtext[i] < 32) || decryptedtext[i] > 126){
+					flag = 1; break;
+			}}
+
+			if(flag==1) break;
     //
     // Dump Decrypted Text
     //
-    cout << "Key: " << key << endl;
     cout << "Decrypted Text: " << endl;
     cout << decryptedtext;
     cout << endl << endl;
-/*                    }
+                    }
                 }
             }
         }
     }
-*/
+
     return 0;
 }
