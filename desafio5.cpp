@@ -4,6 +4,7 @@
 #include <crypto++/modes.h>
 #include <crypto++/filters.h>
 #include <omp.h>
+#include <fstream>
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -55,13 +56,16 @@ int main(int argc, char* argv[]) {
                                     //
                                     // Dump Decrypted Text
                                     //
+                                    char* filename = (char*) malloc(sizeof(char)*20);
+                                    sprintf(filename, "%d.%d.%d.%d.%d", key[11], key[12], key[13], key[14], key[15]);
                                     ofstream f;
-                                    f.open(itoa(key[11])+'.'+itoa(key[12])+'.'+itoa(key[13])+'.'+itoa(key[14])+'.'+itoa(key[15])))
+                                    f.open(filename);
                                     f << "Key: " << key << endl;
                                     f << "Decrypted Text: " << endl;
                                     f << decryptedtext;
                                     f << endl << endl;
                                     f.close();
+                                    free(filename);
 				}
 			} catch(CryptoPP::InvalidCiphertext e){
 				//faz nada
