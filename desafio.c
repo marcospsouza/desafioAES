@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <omp.h>
 // Enable both ECB and CBC mode. Note this can be done before including aes.h or at compile-time.
 // E.g. with GCC by using the -D flag: gcc -c aes.c -DCBC=0 -DECB=1
 #define CBC 1
@@ -14,13 +15,23 @@ static void test_decrypt_ecb(void);
 
 int main(void)
 {
-    uint8_t ciphertext[16];
+    uint8_t ciphertext[16];// = {'T', 'e', 'x', 't', 'o', ' ', 'p', 'a', 'r', 'a', ' ', 't', 'e', 's', 't', 'e'};
+    //uint8_t key[] = {'e', 's', 's', 'a', 's', 'e', 'n', 'h', 'a', 'e', 'h', 'f', 'r', 'a', 'c', 'a'};
     uint8_t key[] = {'K', 'e', 'y', '2', 'G', 'r', 'o', 'u', 'p', '1', '4', 'X', 'X', 'X', 'X', 'X'};
     uint8_t decryptedtext[16];
 
+    /*ES_ECB_encrypt(ciphertext, key, decryptedtext, 16);
+
+    for(int i = 0; i < 16; i++){
+        printf("%x", decryptedtext[i]);
+    }
+
+    printf("\n");*/
 
     FILE *f = fopen("D5-GRUPO14.txt", "r");
     int i;
+    for(i = 0; i < 16; i++)
+        fgetc(f);
     for(i = 0; i < 16; i++){
       ciphertext[i] = fgetc(f);
       printf("%c", ciphertext[i]);
@@ -32,6 +43,7 @@ int main(void)
         for(key[12] = 33; key[12] <= 126; key[12]++){
             for(key[13] = 33; key[13] <= 126; key[13]++){
                 for(key[14] = 33; key[14] <= 126; key[14]++){
+                    #pragma omp parallel for
                     for(int k = 33; k <= 126; k++){
                         key[15] = k;
                         //
@@ -47,12 +59,13 @@ int main(void)
                       stfDecryptor.MessageEnd();*/
 
                         int flag = 0;
+                        int alpha = 0;
                         for(int i = 0; i < 16; i++){
-                            if(decryptedtext[i] < 0 || (decryptedtext[i] > 0 && decryptedtext[i] < 8) || (decryptedtext[i] > 13 && decryptedtext[i] < 32) || decryptedtext[i] > 126){
-                                flag = 1; 
-                                break;
-                            }
+                            if( (decryptedtext[i] >= 65 && decryptedtext[i] <= 90) || (decryptedtext[i] >= 97 && decryptedtext[i] <= 122) || (decryptedtext[i] == 32))
+                                alpha++;
                         }
+                        if (alpha < 14)
+                            flag = 1;
 
                         if(flag==0){
                              //
@@ -62,7 +75,7 @@ int main(void)
                             sprintf(name, "%d.%d.%d.%d.%d.txt", key[11], key[12], key[13], key[14], key[15]);
                            
                             FILE *log_file = fopen(name, "ab+");
-
+ 
                             fprintf(log_file, "KEY: ");
                             for(int i = 0; i < 16; i++){
                                 fprintf(log_file, "%c", key[i]);

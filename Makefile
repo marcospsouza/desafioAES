@@ -2,7 +2,7 @@
 #CFLAGS       = -Wall -mmcu=atmega16 -Os -Wl,-Map,desafio.map
 #OBJCOPY      = avr-objcopy
 CC           = gcc
-CFLAGS       = -Wall -Os -Wl,-Map,desafio.map
+CFLAGS       = -Wall -Os -fopenmp -Wl,-Map,desafio.map
 OBJCOPY      = objcopy
 
 # include path to AVR library
