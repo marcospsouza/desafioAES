@@ -10,16 +10,44 @@
 
 #include "aes.h"
 
-
+uint8_t ahex2bin (char MSB, char LSB)
+{
+    if (MSB > '9') MSB += 9;   // Convert MSB value to a contiguous range (0x30..0x?F)
+    if (LSB > '9') LSB += 9;   // Convert LSB value to a contiguous range (0x30..0x?F)
+    return (MSB << 4) | (LSB & 0x0F);   // Make a result byte using only low nibbles of MSB and LSB
+}
 int main(void)
 {
     uint8_t ciphertext[16] = {0x84, 0xa8, 0x27, 0xb3, 0xe1, 0x8B, 0x85, 0xa9, 0x63, 0x5a, 0x93, 0x58, 0x2c, 0x96, 0xa7, 0x57};
+    uint8_t plaintext[21][16]; //contando \n
+    uint8_t plaintext_decrypted[21][16];
     //uint8_t key[] = {'e', 's', 's', 'a', 's', 'e', 'n', 'h', 'a', 'e', 'h', 'f', 'r', 'a', 'c', 'a'};
     uint8_t key[] = {'K', 'e', 'y', '2', 'G', 'r', 'o', 'u', 'p', '1', '4', 'X', 'X', 'X', 'X', 'X'};
+    uint8_t full_key[] = {'K', 'e', 'y', '2', 'G', 'r', 'o', 'u', 'p', '1', '4', 'W', 'g', '1', 'p', '['};
     uint8_t decryptedtext[16];
 
-       
-    printf("\nCOMEÇANDO\n");
+    FILE *f = fopen("D5-GRUPO14.txt", "rb+");
+    for(int i = 0; i < 21; i++){
+        for(int j = 0; j < 16; j++){
+            char a = fgetc(f);
+            if(a == '\n')
+                a = fgetc(f);
+            char b = fgetc(f);
+            if(b == '\n')
+                b = fgetc(f);
+            plaintext[i][j] = ahex2bin(a,b);
+        }
+    }
+
+    printf("Texto decifrado com a chave 'Key2Group14WG1P[':\n");
+
+    for(int i = 0; i < 21; i++){  
+        AES_ECB_decrypt(plaintext[i], full_key, plaintext_decrypted[i], 16);
+        for(int j = 0; j < 16; j++)
+            printf("%c", plaintext_decrypted[i][j]);
+    }
+
+    printf("\n\nRodando algoritmo para descoberta da chave...\n");
 
 
     clock_t begin_time = clock();
