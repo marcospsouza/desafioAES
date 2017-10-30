@@ -1,0 +1,32 @@
+Sabe de uma coisa? Descobri um ótimo gerador de randômicos. Daqui para a frente, vou usar somente ele:
+                         2^x . 3^y . 5^w . 7^z
+onde x, y, w e z são inteiros positivos maiores que zero. 
+
+
+Além disto, estive pensando, e o melhor é usar o RSA no lugar do Diffie Hellman. Andei lendo um pouco a respeito, e não é tão complicado assim. Os cálculos são bem parecidos, e com o RSA dá até para fazer assinatura digital. Quer ver?
+
+Vamos precisar de dois primos. Um deles eu já gerei:
+5700734181645378434561188374130529072194886063077
+
+Vou enviar o segundo primo no segundo arquivo.
+
+ATENÇÃO:
+Se você não conseguir decifrar o segundo arquivo, então faça o seguinte:
+
+1 - Gere um segundo primo - para isto, é bom usar uma função de teste de primalidade, ou então implementar um teste determinístico.
+
+2 - Calcule o "n" do RSA multiplicando estes dois primos (o que está neste arquivo e o que você gerou).
+
+3 - Calcule (n,e) e (n,d), as suas chaves pública e privada, de acordo com o indicado pelo RSA.
+
+4 - Assine o "desafio" abaixo com a tua chave secreta:
+131159958180373492242065487897880531506
+
+Coloque no Moodle a chave pública (o par (n,e)) e o desafio assinado (ou seja, o resultado de (desafio^d mod n)).
+
+Se você conseguir decifrar o segundo arquivo, não precisa fazer o que está descrito acima.
+
+Assinado: BOB
+
+
+ATENÇÃO: para ser dispensado da prova de criptografia, você tem que decifrar também o segundo arquivo!
