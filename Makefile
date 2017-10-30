@@ -28,7 +28,7 @@ aes.o : aes.h aes.c
 
 desafio.out : aes.o desafio.o
 	# linking object code to binary
-	$(CC) $(CFLAGS) aes.o desafio.o -o desafio.out
+	$(CC) $(CFLAGS) aes.o desafio.o -o desafio.out -lgmp -lm
 
 small: desafio.out
 	$(OBJCOPY) -j .text -O ihex desafio.out rom.hex
