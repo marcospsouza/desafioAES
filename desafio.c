@@ -47,7 +47,7 @@ int main(){
 	mpz_mod(K, K, n);
 
 	uint8_t key[16];
-	mpz_export(key, NULL, 1, sizeof(uint8_t), 1, 0, K);
+	mpz_export(key, NULL, -1, sizeof(uint8_t), 1, 0, K);
 
 	printf("Texto decifrado com a chave '");
 	for(int i = 0; i < 16; i++) printf("%c", key[i]);
