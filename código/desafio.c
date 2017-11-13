@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <math.h>
 // Enable both ECB and CBC mode. Note this can be done before including aes.h or at compile-time.
 // E.g. with GCC by using the -D flag: gcc -c aes.c -DCBC=0 -DECB=1
 #define CBC 1
@@ -17,34 +18,75 @@ uint8_t ahex2bin (char MSB, char LSB){
 
 int main(){
 	const char * const sN = "340282366920938463463374607431768211297";
-	const char * const sG = "339661812359158752487805590648382726653";
-	const char * const sX = "214056462973616421506651988544363568686";
-	const char * const sY = "187530560454113501587601065431781757109";
+	const char * const sX = "257794525404908372502154946820609836772";
+	const char * const sY = "136894371430264143195294921195007788574";
+	const char * const sMAX = "99999999999999999999999999999999999999999999999999";
 
 	mpz_t n;
 	mpz_t g;
 	mpz_t X;
 	mpz_t Y;
+	mpz_t MAX;
 
 	mpz_init(n);
 	mpz_init(g);
 	mpz_init(X);
 	mpz_init(Y);
+	mpz_init(MAX);
 
 	if(mpz_set_str(n, sN, 10)) return -1;
-	if(mpz_set_str(g, sG, 10)) return -1;
 	if(mpz_set_str(X, sX, 10)) return -1;
 	if(mpz_set_str(Y, sY, 10)) return -1;
-
-	mpz_t _g;
-	mpz_init(_g);
-	mpz_invert(_g, g, n);
+	if(mpz_set_str(MAX, sMAX, 10)) return -1;
+	mpz_set_ui(g,2);
 
 	mpz_t K;
 	mpz_init(K);
-	mpz_mul(K, X, Y);
-	mpz_mul(K, K, _g);
-	mpz_mod(K, K, n);
+
+	int flag = 1;
+	for(int z = 1; flag && z < 58; z++){ // 7^z
+		mpz_t a0;
+		mpz_init(a0);
+		mpz_ui_pow_ui(a0,7,z);
+		for(int w = 1; flag && w < 70; w++){ // 5^w
+			mpz_t a1;
+			mpz_init(a1);
+			mpz_ui_pow_ui(a1,5,w);
+			mpz_mul(a1,a1,a0);
+
+			if(mpz_cmp(MAX,a1) < 0)
+				break;
+
+			for(int y = 1; flag && y < 101; y++){ // 3^y
+				mpz_t a2;
+				mpz_init(a2);
+				mpz_ui_pow_ui(a2,3,y);
+				mpz_mul(a2,a2,a1);
+
+				if(mpz_cmp(MAX,a2) < 0)
+					break;
+
+				for(int x = 1; flag && x < 160; x++){ // 2^x
+					mpz_t a3;
+					mpz_init(a3);
+					mpz_ui_pow_ui(a3,2,x);
+					mpz_mul(a3,a3,a2);
+
+					if(mpz_cmp(MAX,a3) < 0)
+						break;
+
+					mpz_t a4;
+					mpz_init(a4);
+					mpz_powm(a4,g,a3,n);
+					if(mpz_cmp(a4,X) == 0){
+						gmp_printf("x: %Zd\n",a3);
+						mpz_powm(K,Y,a3,n);
+						flag = 0;
+					}
+				}
+			}
+		}
+	}
 
 	uint8_t key[16];
 	mpz_export(key, NULL, -1, sizeof(uint8_t), 1, 0, K);
@@ -53,11 +95,11 @@ int main(){
 	for(int i = 0; i < 16; i++) printf("%c", key[i]);
 	printf("':\n");
 
-	uint8_t ciphertext[92][16];
-	uint8_t plaintext[92][16];
+	uint8_t ciphertext[64][16];
+	uint8_t plaintext[64][16];
 
-	FILE *f = fopen("arquivo1.txt", "r+");
-	for(int i = 0; i < 92; i++){
+	FILE *f = fopen("arquivo2.txt", "r+");
+	for(int i = 0; i < 64; i++){
 		for(int j = 0; j < 16; j++){
 			char a = fgetc(f);
 			if(a == '\n')
@@ -69,7 +111,7 @@ int main(){
 		}
 	}
 
-	for(int i = 0; i < 92; i++){  
+	for(int i = 0; i < 64; i++){
 		AES_ECB_decrypt(ciphertext[i], key, plaintext[i], 16);
 		for(int j = 0; j < 16; j++)
 			printf("%c", plaintext[i][j]);
