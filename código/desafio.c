@@ -22,28 +22,83 @@ int main(){
 	const char * const sY = "136894371430264143195294921195007788574";
 	const char * const sMAX = "99999999999999999999999999999999999999999999999999";
 
+
+	const char * const sprime1 = "5700734181645378434561188374130529072194886063077";
+	const char * const sprime2 = "35894562752016259689151502540913447503526083242567";
+	const char * const sprime3 = "5700734181645378434561188374130529072194886063076";
+	const char * const sprime4 = "35894562752016259689151502540913447503526083242566";
+
+	mpz_t n_primes;
+	mpz_t on_primes;
+	mpz_t prime1;
+	mpz_t prime2;
+	mpz_t prime3;
+	mpz_t prime4;
+	mpz_t public_key;
+	mpz_t private_key;
+	mpz_t mdc;
+	mpz_t d;
+
 	mpz_t n;
 	mpz_t g;
 	mpz_t X;
 	mpz_t Y;
 	mpz_t MAX;
 
+	mpz_init(mdc);
+	mpz_init(d);
+	mpz_init(on_primes);
+	mpz_init(n_primes);
+	mpz_init(prime1);
+	mpz_init(prime2);
+	mpz_init(prime3);
+	mpz_init(prime4);
 	mpz_init(n);
 	mpz_init(g);
 	mpz_init(X);
 	mpz_init(Y);
 	mpz_init(MAX);
 
+	if(mpz_set_str(prime3, sprime3, 10)) return -1;
+	if(mpz_set_str(prime4, sprime4, 10)) return -1;
+	if(mpz_set_str(prime1, sprime1, 10)) return -1;
+	if(mpz_set_str(prime2, sprime2, 10)) return -1;
 	if(mpz_set_str(n, sN, 10)) return -1;
 	if(mpz_set_str(X, sX, 10)) return -1;
 	if(mpz_set_str(Y, sY, 10)) return -1;
 	if(mpz_set_str(MAX, sMAX, 10)) return -1;
 	mpz_set_ui(g,2);
 
+
+	mpz_mul(n_primes, prime1, prime2);
+	mpz_mul(on_primes, prime3, prime4);
+
+	int found_mdc = 1;
+	int j = 2;
+	mpz_t e;
+	mpz_init(e);
+	mpz_t um;
+	mpz_init(um);
+	mpz_set_ui(um, 1);
+	while(found_mdc){
+		mpz_set_ui(e, j);
+		mpz_gcd(mdc, e, on_primes);
+		gmp_printf("mdc %Zd\n", mdc);
+		if(mpz_cmp(mdc, um))
+			found_mdc = 0;
+		j++;
+	}
+	mpz_invert(d, e, on_primes);
+
+	gmp_printf("n: %Zd\n", n_primes);
+	gmp_printf("O(n): %Zd\n", on_primes);
+	gmp_printf("e: %Zd\n", e);
+	gmp_printf("d: %Zd\n", d);
+
 	mpz_t K;
 	mpz_init(K);
 
-	int flag = 1;
+	/*int flag = 1;
 	for(int z = 1; flag && z < 58; z++){ // 7^z
 		mpz_t a0;
 		mpz_init(a0);
@@ -116,4 +171,5 @@ int main(){
 		for(int j = 0; j < 16; j++)
 			printf("%c", plaintext[i][j]);
 	}
+	*/
 }
