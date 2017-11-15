@@ -74,7 +74,7 @@ int main(){
 	mpz_mul(on_primes, prime3, prime4);
 
 	int found_mdc = 1;
-	int j = 2;
+	int j = 3555468;
 	mpz_t e;
 	mpz_init(e);
 	mpz_t um;
@@ -84,7 +84,7 @@ int main(){
 		mpz_set_ui(e, j);
 		mpz_gcd(mdc, e, on_primes);
 		gmp_printf("mdc %Zd\n", mdc);
-		if(mpz_cmp(mdc, um))
+		if(mpz_cmp(mdc, um) == 0)
 			found_mdc = 0;
 		j++;
 	}
